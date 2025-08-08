@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Game Splash</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Party Game</h1>
+            <p>Choose your adventure</p>
+        </header>
+        
+        <div class="slideshow-container">
+            <div class="slide active" data-page="game1">
+                <div class="slide-content">
+                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?w=800&h=600&fit=crop" alt="Game 1">
+                    <div class="slide-overlay">
+                        <h2>Trivia Night</h2>
+                        <p>Test your knowledge with friends</p>
+                        <button class="slide-btn">Play Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slide" data-page="game2">
+                <div class="slide-content">
+                    <img src="https://img.freepik.com/premium-photo/cartoon-bomb-with-exploding-fire-sparks-white-background_974533-98551.jpg" alt="Game 2">
+                    <div class="slide-overlay">
+                        <h2>Wer hat die Bombe?</h2>
+                        <p>Finde Begriffe, um nicht zu explodieren!</p>
+                        <button class="slide-btn">Play Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slide" data-page="game3">
+                <div class="slide-content">
+                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?w=800&h=600&fit=crop" alt="Game 3">
+                    <div class="slide-overlay">
+                        <h2>Word Association</h2>
+                        <p>Connect words in creative ways</p>
+                        <button class="slide-btn">Play Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slide" data-page="game4">
+                <div class="slide-content">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop" alt="Game 4">
+                    <div class="slide-overlay">
+                        <h2>Pictionary</h2>
+                        <p>Draw and guess together</p>
+                        <button class="slide-btn">Play Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn prev-btn" id="prevBtn">‹</button>
+            <div class="dots-container">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+                <span class="dot" data-slide="3"></span>
+            </div>
+            <button class="nav-btn next-btn" id="nextBtn">›</button>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Start Game?</h2>
+            <p id="modalDescription">Are you ready to play?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm-btn" id="confirmPlay">Play</button>
+                <button class="modal-btn cancel-btn" id="cancelPlay">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

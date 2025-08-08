@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .game-area {
+            margin: 30px 0;
+        }
+        
+        .word-chain {
+            font-size: 1.5rem;
+            margin: 30px 0;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .current-word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .input-area {
+            margin: 30px 0;
+        }
+        
+        .word-input {
+            font-size: 1.2rem;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        
+        .word-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-btn {
+            background: #6c757d;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #dc3545;
+        }
+        
+        .game-status {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🔗 Word Association</h1>
+        
+        <div class="score">
+            Score: <span id="score">0</span> | Round: <span id="round">1</span>/5
+        </div>
+        
+        <div class="game-area">
+            <div class="timer" id="timer">30</div>
+            <div class="current-word" id="currentWord">Ready to start?</div>
+            <div class="word-chain" id="wordChain"></div>
+            <div class="input-area">
+                <input type="text" class="word-input" id="wordInput" placeholder="Type your association..." disabled>
+                <button class="btn" id="submitBtn" disabled>Submit</button>
+            </div>
+            <div class="game-status" id="status">Click "Start Round" to begin!</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="startBtn">Start Round</button>
+            <button class="btn" id="nextBtn" style="display: none;">Next Round</button>
+            <button class="btn back-btn" onclick="window.location.href='../index.html'">Back to Menu</button>
+        </div>
+    </div>
+    
+    <script>
+        let score = 0;
+        let currentRound = 1;
+        let timeLeft = 30;
+        let timerInterval;
+        let isPlaying = false;
+        let wordChain = [];
+        
+        // Starting words for each round
+        const startingWords = [
+            "Ocean",
+            "Fire",
+            "Music",
+            "Light",
+            "Dream"
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            document.getElementById('startBtn').addEventListener('click', startRound);
+            document.getElementById('nextBtn').addEventListener('click', nextRound);
+            document.getElementById('submitBtn').addEventListener('click', submitWord);
+            document.getElementById('wordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitWord();
+                }
+            });
+        }
+        
+        function startRound() {
+            if (currentRound <= startingWords.length) {
+                isPlaying = true;
+                const startingWord = startingWords[currentRound - 1];
+                
+                wordChain = [startingWord];
+                document.getElementById('currentWord').textContent = startingWord;
+                document.getElementById('wordChain').innerHTML = '';
+                document.getElementById('status').textContent = "Type a word that you associate with the current word!";
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+                document.getElementById('wordInput').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('wordInput').focus();
+                
+                // Start timer
+                timeLeft = 30;
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+        }
+        
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                endRound();
+            }
+        }
+        
+        function submitWord() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.trim();
+            
+            if (word && isPlaying) {
+                wordChain.push(word);
+                document.getElementById('currentWord').textContent = word;
+                input.value = '';
+                
+                // Update word chain display
+                updateWordChainDisplay();
+                
+                // Add points
+                score += 5;
+                document.getElementById('score').textContent = score;
+                
+                // Reset timer
+                timeLeft = 30;
+                document.getElementById('timer').textContent = timeLeft;
+            }
+        }
+        
+        function updateWordChainDisplay() {
+            const chainDiv = document.getElementById('wordChain');
+            chainDiv.innerHTML = wordChain.map((word, index) => 
+                `<span style="color: ${index === wordChain.length - 1 ? '#667eea' : '#888'}; font-weight: ${index === wordChain.length - 1 ? 'bold' : 'normal'};">${word}</span>`
+            ).join(' → ');
+        }
+        
+        function endRound() {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            document.getElementById('status').textContent = "Time's up!";
+            document.getElementById('wordInput').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Show final chain
+            if (wordChain.length > 1) {
+                document.getElementById('wordChain').innerHTML = `
+                    <h3>Final Chain:</h3>
+                    <p>${wordChain.join(' → ')}</p>
+                    <p>Chain length: ${wordChain.length} words</p>
+                `;
+            }
+        }
+        
+        function nextRound() {
+            currentRound++;
+            document.getElementById('round').textContent = currentRound;
+            
+            if (currentRound <= startingWords.length) {
+                // Reset for next round
+                document.getElementById('currentWord').textContent = "Ready for next round?";
+                document.getElementById('wordChain').innerHTML = '';
+                document.getElementById('status').textContent = "Click 'Start Round' to begin!";
+                document.getElementById('timer').textContent = "30";
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('nextBtn').style.display = 'none';
+            } else {
+                // Game over
+                document.querySelector('.game-area').innerHTML = `
+                    <h2>Game Over!</h2>
+                    <p>Final Score: ${score}</p>
+                    <p>Great word associations!</p>
+                `;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pictionary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .game-area {
+            margin: 30px 0;
+        }
+        
+        .canvas-container {
+            border: 3px solid #e9ecef;
+            border-radius: 10px;
+            margin: 20px auto;
+            background: white;
+            position: relative;
+        }
+        
+        #drawingCanvas {
+            border-radius: 8px;
+            cursor: crosshair;
+            background: white;
+        }
+        
+        .word-display {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #667eea;
+            min-height: 60px;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #dc3545;
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-btn {
+            background: #6c757d;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        
+        .clear-btn {
+            background: #dc3545;
+        }
+        
+        .clear-btn:hover {
+            background: #c82333;
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+        
+        .game-status {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: #555;
+        }
+        
+        .color-picker {
+            margin: 20px 0;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 5px;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎨 Pictionary</h1>
+        
+        <div class="score">
+            Score: <span id="score">0</span> | Round: <span id="round">1</span>/5
+        </div>
+        
+        <div class="game-area">
+            <div class="word-display" id="word">Ready to start?</div>
+            <div class="timer" id="timer">60</div>
+            <div class="color-picker">
+                <div class="color-option active" style="background: #000;" data-color="#000"></div>
+                <div class="color-option" style="background: #dc3545;" data-color="#dc3545"></div>
+                <div class="color-option" style="background: #28a745;" data-color="#28a745"></div>
+                <div class="color-option" style="background: #007bff;" data-color="#007bff"></div>
+                <div class="color-option" style="background: #ffc107;" data-color="#ffc107"></div>
+                <div class="color-option" style="background: #6f42c1;" data-color="#6f42c1"></div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="drawingCanvas" width="600" height="400"></canvas>
+            </div>
+            <div class="game-status" id="status">Click "Start Round" to begin!</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="startBtn">Start Round</button>
+            <button class="btn clear-btn" id="clearBtn">Clear Canvas</button>
+            <button class="btn" id="nextBtn" style="display: none;">Next Round</button>
+            <button class="btn back-btn" onclick="window.location.href='../index.html'">Back to Menu</button>
+        </div>
+    </div>
+    
+    <script>
+        let score = 0;
+        let currentRound = 1;
+        let timeLeft = 60;
+        let timerInterval;
+        let isPlaying = false;
+        let isDrawing = false;
+        let currentColor = '#000';
+        
+        // Canvas setup
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Sample words for pictionary
+        const pictionaryWords = [
+            "House",
+            "Tree",
+            "Car",
+            "Sun",
+            "Cat"
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCanvas();
+            setupEventListeners();
+        });
+        
+        function setupCanvas() {
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('startBtn').addEventListener('click', startRound);
+            document.getElementById('nextBtn').addEventListener('click', nextRound);
+            document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+            
+            // Color picker
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentColor = this.getAttribute('data-color');
+                    ctx.strokeStyle = currentColor;
+                });
+            });
+            
+            // Canvas drawing events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function startRound() {
+            if (currentRound <= pictionaryWords.length) {
+                isPlaying = true;
+                const currentWord = pictionaryWords[currentRound - 1];
+                
+                document.getElementById('word').textContent = currentWord;
+                document.getElementById('status').textContent = "Draw the word!";
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+                
+                // Clear canvas
+                clearCanvas();
+                
+                // Start timer
+                timeLeft = 60;
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+        }
+        
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                endRound();
+            }
+        }
+        
+        function endRound() {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            document.getElementById('status').textContent = "Time's up!";
+            document.getElementById('word').textContent = "Round Complete";
+            
+            // Add points (you can implement scoring logic)
+            score += 10;
+            document.getElementById('score').textContent = score;
+        }
+        
+        function nextRound() {
+            currentRound++;
+            document.getElementById('round').textContent = currentRound;
+            
+            if (currentRound <= pictionaryWords.length) {
+                // Reset for next round
+                document.getElementById('word').textContent = "Ready for next round?";
+                document.getElementById('status').textContent = "Click 'Start Round' to begin!";
+                document.getElementById('timer').textContent = "60";
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('nextBtn').style.display = 'none';
+                clearCanvas();
+            } else {
+                // Game over
+                document.querySelector('.game-area').innerHTML = `
+                    <h2>Game Over!</h2>
+                    <p>Final Score: ${score}</p>
+                    <p>Great drawings!</p>
+                `;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('clearBtn').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

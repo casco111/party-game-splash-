@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Night</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .game-area {
+            margin: 30px 0;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .score {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #666;
+        }
+        
+        .controls {
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .back-btn {
+            background: #6c757d;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 Trivia Night</h1>
+        
+        <div class="score">
+            Score: <span id="score">0</span> | Question: <span id="questionNum">1</span>/10
+        </div>
+        
+        <div class="game-area">
+            <div class="question" id="question">
+                What is the capital of France?
+            </div>
+            
+            <div class="options">
+                <div class="option" data-correct="true">Paris</div>
+                <div class="option" data-correct="false">London</div>
+                <div class="option" data-correct="false">Berlin</div>
+                <div class="option" data-correct="false">Madrid</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="nextBtn">Next Question</button>
+            <button class="btn back-btn" onclick="window.location.href='../index.html'">Back to Menu</button>
+        </div>
+    </div>
+    
+    <script>
+        // Trivia game logic will go here
+        let score = 0;
+        let currentQuestion = 1;
+        
+        // Sample questions (you can expand this)
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                options: ["Paris", "London", "Berlin", "Madrid"],
+                correct: 0
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                correct: 1
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic", "Indian", "Arctic", "Pacific"],
+                correct: 3
+            }
+        ];
+        
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function() {
+            updateScore();
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
+            
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        }
+        
+        function handleOptionClick(e) {
+            const isCorrect = e.target.getAttribute('data-correct') === 'true';
+            
+            if (isCorrect) {
+                score++;
+                e.target.style.background = '#28a745';
+                e.target.style.color = 'white';
+            } else {
+                e.target.style.background = '#dc3545';
+                e.target.style.color = 'white';
+            }
+            
+            updateScore();
+            
+            // Disable all options after selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion <= questions.length) {
+                // Reset options
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.style.background = '#f8f9fa';
+                    opt.style.color = '#333';
+                    opt.style.pointerEvents = 'auto';
+                });
+                
+                // Update question display
+                document.getElementById('questionNum').textContent = currentQuestion;
+                
+                // Load new question (you can expand this)
+                if (currentQuestion === 2) {
+                    document.getElementById('question').textContent = "Which planet is known as the Red Planet?";
+                    const options = document.querySelectorAll('.option');
+                    options[0].textContent = "Venus";
+                    options[1].textContent = "Mars";
+                    options[2].textContent = "Jupiter";
+                    options[3].textContent = "Saturn";
+                    
+                    options[0].setAttribute('data-correct', 'false');
+                    options[1].setAttribute('data-correct', 'true');
+                    options[2].setAttribute('data-correct', 'false');
+                    options[3].setAttribute('data-correct', 'false');
+                }
+            } else {
+                // Game over
+                document.querySelector('.game-area').innerHTML = `
+                    <h2>Game Over!</h2>
+                    <p>Final Score: ${score}/${questions.length}</p>
+                    <p>Great job!</p>
+                `;
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+        }
+        
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+    </script>
+</body>
+</html> 
