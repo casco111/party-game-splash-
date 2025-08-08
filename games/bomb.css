@@ -227,7 +227,7 @@ h1 {
 
 /* Game section specific styling */
 #gameSection {
-    display: none;
+    
     flex-direction: column;
     height: 100%;
     overflow: hidden;
