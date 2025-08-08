@@ -4,392 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wer hat die Bombe?</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-        }
-        
-        .game-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 800px;
-            width: 90%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        
-        .category-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 30px 0;
-            color: #667eea;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .timer {
-            font-size: 3rem;
-            margin: 20px 0;
-            color: #dc3545;
-            font-weight: bold;
-        }
-        
-        .bomb {
-            font-size: 4rem;
-            margin: 20px 0;
-            transition: all 0.3s ease;
-        }
-        
-        .bomb.exploding {
-            animation: shake 0.5s infinite;
-            color: #dc3545;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        .word-input {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            font-size: 1.2rem;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .word-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .controls {
-            margin: 30px 0;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .back-btn {
-            background: #6c757d;
-        }
-        
-        .back-btn:hover {
-            background: #5a6268;
-        }
-        
-        .score {
-            font-size: 1.2rem;
-            margin: 20px 0;
-            color: #666;
-        }
-        
-        .found-words {
-            margin: 20px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .word-tag {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .game-over {
-            font-size: 2rem;
-            color: #dc3545;
-            margin: 20px 0;
-        }
-        
-        .success {
-            color: #28a745;
-        }
-    </style>
+    <link rel="stylesheet" href="bomb.css">
 </head>
 <body>
     <div class="game-container">
         <h1>💣 Wer hat die Bombe?</h1>
         
-        <div class="score">
-            Gefundene Wörter: <span id="score">0</span>
+        <!-- Setup Section -->
+        <div id="setupSection" class="setup-section">
+            <h2>Spieler hinzufügen</h2>
+            <div class="player-input">
+                <input type="text" id="playerNameInput" placeholder="Spielername eingeben">
+                <button class="add-player-btn" id="addPlayerBtn">Hinzufügen</button>
+            </div>
+            <div class="players-list" id="playersList"></div>
+            <button class="btn" id="startGameBtn" disabled>Spiel starten</button>
         </div>
         
-        <div class="category-display" id="category">
-            Klicke Start um zu beginnen!
-        </div>
-        
-        <div class="bomb" id="bomb">💣</div>
-        
-        <div class="timer" id="timer">60</div>
-        
-        <input type="text" class="word-input" id="wordInput" placeholder="Gib ein Wort ein..." disabled>
-        
-        <div class="found-words" id="foundWords"></div>
-        
-        <div class="controls">
-            <button class="btn" id="startBtn">Start</button>
-            <button class="btn" id="nextBtn" style="display: none;">Nächste Kategorie</button>
-            <button class="btn back-btn" onclick="window.location.href='../index.html'">Zurück zum Menu</button>
+        <!-- Game Section -->
+        <div id="gameSection" class="hidden">
+            <div class="round-info">
+                Runde: <span id="roundNumber">1</span> | 
+                Gefundene Wörter: <span id="wordCount">0</span>
+            </div>
+            
+            <div class="category-display" id="category">
+                Kategorie wird gewählt...
+            </div>
+            
+            <div class="current-player" id="currentPlayer">
+                Aktueller Spieler: -
+            </div>
+            
+            <div class="bomb" id="bomb">💣</div>
+            
+            <div class="timer" id="timer">30</div>
+            
+            <div class="controls">
+                <button class="btn next-btn" id="nextBtn">Nächster Spieler</button>
+                <button class="btn restart-btn" id="restartBtn">Neustart</button>
+                <button class="btn back-btn" onclick="window.location.href='../index.html'">Zurück zum Menu</button>
+            </div>
         </div>
     </div>
     
-    <script>
-        // Get URL parameters to access data from main page
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameType = urlParams.get('game');
-        const gameTitle = urlParams.get('title');
-        
-        // Alternative: Get data from localStorage
-        const storedGame = localStorage.getItem('currentGame');
-        const storedTitle = localStorage.getItem('gameTitle');
-        const storedDescription = localStorage.getItem('gameDescription');
-        
-        console.log('Game type (URL):', gameType);
-        console.log('Game title (URL):', gameTitle);
-        console.log('Game type (localStorage):', storedGame);
-        console.log('Game title (localStorage):', storedTitle);
-        console.log('Game description (localStorage):', storedDescription);
-        
-        // Update the page title if data is available
-        if (gameTitle) {
-            document.title = gameTitle;
-            document.querySelector('h1').textContent = gameTitle;
-        } else if (storedTitle) {
-            document.title = storedTitle;
-            document.querySelector('h1').textContent = storedTitle;
-        }
-        
-        // Game variables
-        let score = 0;
-        let timeLeft = 60;
-        let timer;
-        let isPlaying = false;
-        let foundWords = [];
-        let currentCategory = '';
-        
-        // Categories and their words
-        const categories = [
-            {
-                name: "Fliegende Dinge",
-                words: ["Vogel", "Flugzeug", "Schmetterling", "Biene", "Hummer", "Drache", "Engel", "Superman", "Hubschrauber", "Rakete", "Satellit", "Ballon", "Wolke", "Blatt", "Feder"]
-            },
-            {
-                name: "Tiere",
-                words: ["Hund", "Katze", "Pferd", "Kuh", "Schwein", "Huhn", "Ente", "Gans", "Schaf", "Ziege", "Kaninchen", "Maus", "Ratte", "Hamster", "Meerschweinchen"]
-            },
-            {
-                name: "Farben",
-                words: ["Rot", "Blau", "Grün", "Gelb", "Orange", "Lila", "Pink", "Braun", "Schwarz", "Weiß", "Grau", "Türkis", "Magenta", "Violett", "Indigo"]
-            },
-            {
-                name: "Berufe",
-                words: ["Arzt", "Lehrer", "Ingenieur", "Anwalt", "Polizist", "Feuerwehrmann", "Koch", "Kellner", "Verkäufer", "Bäcker", "Metzger", "Gärtner", "Maler", "Elektriker", "Mechaniker"]
-            },
-            {
-                name: "Sportarten",
-                words: ["Fußball", "Basketball", "Tennis", "Volleyball", "Handball", "Hockey", "Golf", "Schwimmen", "Laufen", "Radfahren", "Skifahren", "Snowboard", "Surfen", "Klettern", "Boxen"]
-            }
-        ];
-        
-        let currentCategoryIndex = 0;
-        
-        // DOM elements
-        const categoryDisplay = document.getElementById('category');
-        const timerDisplay = document.getElementById('timer');
-        const bombDisplay = document.getElementById('bomb');
-        const wordInput = document.getElementById('wordInput');
-        const startBtn = document.getElementById('startBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const scoreDisplay = document.getElementById('score');
-        const foundWordsDisplay = document.getElementById('foundWords');
-        
-        // Event listeners
-        startBtn.addEventListener('click', startGame);
-        nextBtn.addEventListener('click', nextCategory);
-        wordInput.addEventListener('keypress', handleWordSubmit);
-        
-        function startGame() {
-            isPlaying = true;
-            score = 0;
-            foundWords = [];
-            currentCategoryIndex = 0;
-            updateScore();
-            updateFoundWords();
-            startBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            wordInput.disabled = false;
-            wordInput.focus();
-            loadCategory();
-            startTimer();
-        }
-        
-        function loadCategory() {
-            if (currentCategoryIndex >= categories.length) {
-                endGame();
-                return;
-            }
-            
-            currentCategory = categories[currentCategoryIndex];
-            categoryDisplay.textContent = currentCategory.name;
-            foundWords = [];
-            updateFoundWords();
-            timeLeft = 60;
-            updateTimer();
-        }
-        
-        function nextCategory() {
-            currentCategoryIndex++;
-            loadCategory();
-            nextBtn.style.display = 'none';
-            wordInput.disabled = false;
-            wordInput.focus();
-            startTimer();
-        }
-        
-        function startTimer() {
-            clearInterval(timer);
-            timer = setInterval(() => {
-                timeLeft--;
-                updateTimer();
-                
-                if (timeLeft <= 10) {
-                    bombDisplay.classList.add('exploding');
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    bombDisplay.classList.remove('exploding');
-                    bombDisplay.textContent = '💥';
-                    bombDisplay.style.color = '#dc3545';
-                    bombDisplay.style.fontSize = '6rem';
-                    
-                    setTimeout(() => {
-                        if (currentCategoryIndex < categories.length - 1) {
-                            nextBtn.style.display = 'inline-block';
-                            wordInput.disabled = true;
-                            categoryDisplay.innerHTML = '<span class="game-over">Zeit abgelaufen!</span>';
-                        } else {
-                            endGame();
-                        }
-                    }, 2000);
-                }
-            }, 1000);
-        }
-        
-        function updateTimer() {
-            timerDisplay.textContent = timeLeft;
-            if (timeLeft <= 10) {
-                timerDisplay.style.color = '#dc3545';
-            } else {
-                timerDisplay.style.color = '#333';
-            }
-        }
-        
-        function handleWordSubmit(e) {
-            if (e.key === 'Enter' && isPlaying && timeLeft > 0) {
-                const word = wordInput.value.trim().toLowerCase();
-                if (word && !foundWords.includes(word)) {
-                    const categoryWords = currentCategory.words.map(w => w.toLowerCase());
-                    if (categoryWords.includes(word)) {
-                        foundWords.push(word);
-                        score++;
-                        updateScore();
-                        updateFoundWords();
-                        wordInput.value = '';
-                        
-                        // Check if all words found
-                        if (foundWords.length === currentCategory.words.length) {
-                            clearInterval(timer);
-                            bombDisplay.classList.remove('exploding');
-                            bombDisplay.textContent = '🎉';
-                            bombDisplay.style.color = '#28a745';
-                            categoryDisplay.innerHTML = '<span class="success">Alle Wörter gefunden!</span>';
-                            setTimeout(() => {
-                                if (currentCategoryIndex < categories.length - 1) {
-                                    nextBtn.style.display = 'inline-block';
-                                    wordInput.disabled = true;
-                                } else {
-                                    endGame();
-                                }
-                            }, 2000);
-                        }
-                    }
-                }
-            }
-        }
-        
-        function updateScore() {
-            scoreDisplay.textContent = score;
-        }
-        
-        function updateFoundWords() {
-            foundWordsDisplay.innerHTML = '';
-            foundWords.forEach(word => {
-                const wordTag = document.createElement('span');
-                wordTag.className = 'word-tag';
-                wordTag.textContent = word;
-                foundWordsDisplay.appendChild(wordTag);
-            });
-        }
-        
-        function endGame() {
-            isPlaying = false;
-            clearInterval(timer);
-            wordInput.disabled = true;
-            startBtn.style.display = 'inline-block';
-            nextBtn.style.display = 'none';
-            bombDisplay.classList.remove('exploding');
-            bombDisplay.textContent = '💣';
-            bombDisplay.style.color = '#333';
-            bombDisplay.style.fontSize = '4rem';
-            
-            categoryDisplay.innerHTML = `<span class="success">Spiel beendet!<br>Gesamtpunktzahl: ${score}</span>`;
-            timerDisplay.textContent = '0';
-        }
-    </script>
+    <script src="bomb.js"></script>
+    <script src="firebaseTest.js"></script>
 </body>
 </html> 
