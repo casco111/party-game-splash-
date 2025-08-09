@@ -8,21 +8,17 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>💣 Wer hat die Bombe?</h1>
+        
         
         <!-- Setup Section -->
         <div id="setupSection" class="setup-section">
-            <h2>Spieler hinzufügen</h2>
-            <div class="player-input">
-                <input type="text" id="playerNameInput" placeholder="Spielername eingeben">
-                <button class="add-player-btn" id="addPlayerBtn">Hinzufügen</button>
-            </div>
-            <div class="players-list" id="playersList"></div>
-            <button class="btn" id="startGameBtn" disabled>Spiel starten</button>
+            <h1>💣 Wer hat die Bombe?</h1>
+            <iframe src="player-select.html" style="border:none; width:100%; height:80%;"></iframe>
         </div>
         
         <!-- Game Section -->
         <div id="gameSection" class="hidden">
+            
             <div class="round-info">
                 Runde: <span id="roundNumber">1</span> | 
                 Gefundene Wörter: <span id="wordCount">0</span>
@@ -32,19 +28,33 @@
                 Kategorie wird gewählt...
             </div>
             
-            <div class="current-player" id="currentPlayer">
-                Aktueller Spieler: -
+            <div class="current-player" >
+                <div class="player-label">Aktueller Spieler:</div>
+                <div class="player-name" id="currentPlayer">-</div>
             </div>
+            
             
             <div class="bomb" id="bomb">💣</div>
             
             <div class="timer" id="timer">30</div>
             
             <div class="controls">
-                <button class="btn next-btn" id="nextBtn">Nächster Spieler</button>
-                <button class="btn restart-btn" id="restartBtn">Neustart</button>
-                <button class="btn back-btn" onclick="window.location.href='../index.html'">Zurück zum Menu</button>
+                <!-- Big centered Next Player button -->
+                <button class="btn next-btn" id="nextBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                    Nächster Spieler
+                </button>
+            
+                <!-- Bottom anchored buttons -->
+                <div class="bottom-controls">
+                    <button class="btn" id="restartBtn">Neustart</button>
+                    <button class="btn" onclick="window.location.href='../index.html'">Menü</button>
+                </div>
             </div>
+            
+            
         </div>
     </div>
     

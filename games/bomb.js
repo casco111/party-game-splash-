@@ -37,6 +37,10 @@ let currentInterval = 0;
 let timeIntervals = [20, 10, 5];
 let intervalSwitchCount = [2, 3]; //per player
 
+let options = {
+    timeMultiplier:1.0
+
+};
 // Categories
 const categories = [
     "Fliegende Dinge",
@@ -96,10 +100,6 @@ const categories = [
 // DOM elements
 const setupSection = document.getElementById('setupSection');
 const gameSection = document.getElementById('gameSection');
-const playerNameInput = document.getElementById('playerNameInput');
-const addPlayerBtn = document.getElementById('addPlayerBtn');
-const playersList = document.getElementById('playersList');
-const startGameBtn = document.getElementById('startGameBtn');
 const categoryDisplay = document.getElementById('category');
 const currentPlayerDisplay = document.getElementById('currentPlayer');
 const timerDisplay = document.getElementById('timer');
@@ -109,69 +109,22 @@ const restartBtn = document.getElementById('restartBtn');
 const roundNumberDisplay = document.getElementById('roundNumber');
 const wordCountDisplay = document.getElementById('wordCount');
 
-// Load saved players from localStorage
-function loadSavedPlayers() {
-    const savedPlayers = localStorage.getItem('bombGamePlayers');
-    console.log(savedPlayers);
-    if (savedPlayers) {
-        players = JSON.parse(savedPlayers);
-        updatePlayersList();
-        updateStartButton();
-        restartGame()
-    }
 
-}
-
-// Save players to localStorage
-function savePlayers() {
-    localStorage.setItem('bombGamePlayers', JSON.stringify(players));
-}
-
-// Event listeners
-addPlayerBtn.addEventListener('click', addPlayer);
-startGameBtn.addEventListener('click', startGame);
 nextBtn.addEventListener('click', nextPlayer);
 restartBtn.addEventListener('click', restartGame);
 
-playerNameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addPlayer();
-});
-// Load saved players when page loads
-document.addEventListener('DOMContentLoaded', loadSavedPlayers);
-function addPlayer() {
-    const name = playerNameInput.value.trim();
-    if (name && !players.includes(name)) {
-        players.push(name);
-        playerNameInput.value = '';
-        updatePlayersList();
-        updateStartButton();
-        savePlayers(); // Save to localStorage
+window.addEventListener('message', (event) => {
+    // Optionally check event.origin here for security
+    const data = event.data;
+    if(data.type === 'startGame'){
+        players = data.players;
+        startGame();
     }
-}
+  });
 
-function removePlayer(name) {
-    players = players.filter(player => player !== name);
-    updatePlayersList();
-    updateStartButton();
-    savePlayers(); // Save to localStorage
-}
 
-function updatePlayersList() {
-    playersList.innerHTML = '';
-    players.forEach(player => {
-        const playerTag = document.createElement('span');
-        playerTag.className = 'player-tag';
-        playerTag.innerHTML = `
-            ${player}
-            <button class="remove-player" onclick="removePlayer('${player}')">×</button>
-        `;
-        playersList.appendChild(playerTag);
-    });
-}
+// Load saved players when page loads
 
-function updateStartButton() {
-    startGameBtn.disabled = players.length < 2;
-}
 
 function startGame() {
     if (players.length < 2) return;
@@ -184,8 +137,15 @@ function startGame() {
     roundNumber = 1;
     usedPlayers = [];
     currentInterval = 0;
+    timeLeft = timeIntervals[currentInterval];
     
+    bombDisplay.classList.remove('exploding');
+    bombDisplay.textContent = '💣';
+    bombDisplay.style.color = '#333';
+    bombDisplay.style.fontSize = '4rem';
+
     updateRoundInfo();
+    updateTimer();
     loadNewCategory();
     selectRandomPlayer();
     startTimer();
@@ -210,7 +170,7 @@ function selectRandomPlayer() {
     let selectedPlayer = availablePlayers[randomIndex];
     
     usedPlayers.push(selectedPlayer);
-    currentPlayerDisplay.textContent = `Aktueller Spieler: ${selectedPlayer}`;
+    currentPlayerDisplay.textContent = selectedPlayer;
 }
 
 function nextPlayer() {
@@ -229,10 +189,7 @@ function nextPlayer() {
     timeLeft = timeIntervals[currentInterval];
     
     updateTimer();
-    bombDisplay.classList.remove('exploding');
-    bombDisplay.textContent = '💣';
-    bombDisplay.style.color = '#333';
-    bombDisplay.style.fontSize = '4rem';
+   
     
     // Select next player
     selectRandomPlayer();
@@ -255,6 +212,7 @@ function startTimer() {
             bombDisplay.textContent = '💥';
             bombDisplay.style.color = '#dc3545';
             bombDisplay.style.fontSize = '6rem';
+            nextBtn.classList.add('hidden')
             
             setTimeout(() => {
                 endGame();
@@ -279,41 +237,19 @@ function updateRoundInfo() {
 
 function restartGame() {
     // Reset game state
-    isPlaying = true;
-    wordCount = 0;
-    roundNumber = 1;
-    usedPlayers = [];
-    currentInterval = 0;
-    
-    // Reset UI
-    updateRoundInfo();
-    loadNewCategory();
-    selectRandomPlayer();
-    startTimer();
-    
-    // Reset bomb display
-    bombDisplay.classList.remove('exploding');
-    bombDisplay.textContent = '💣';
-    bombDisplay.style.color = '#333';
-    bombDisplay.style.fontSize = '4rem';
-    
-    // Reset timer
-    timeLeft = 20;
-    updateTimer();
-    
-    // Reset category and player display
-    categoryDisplay.textContent = currentCategory;
-    currentPlayerDisplay.textContent = `Aktueller Spieler: ${usedPlayers[usedPlayers.length - 1]}`;
+    nextBtn.classList.remove('hidden')
+    startGame();
 }
 
 function endGame() {
     isPlaying = false;
     clearInterval(timer);
     
-    const currentPlayer = currentPlayerDisplay.textContent.replace('Aktueller Spieler: ', '');
+    const currentPlayer = currentPlayerDisplay.textContent;
     categoryDisplay.innerHTML = `<span class="game-over">💥 ${currentPlayer} hat die Bombe gehalten!</span>`;
     currentPlayerDisplay.textContent = `Spiel beendet - ${wordCount} Wörter gefunden`;
     timerDisplay.textContent = '0';
+    
 }
 
 function resetGame() {
