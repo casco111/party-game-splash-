@@ -35,70 +35,21 @@ let currentCategory = '';
 let usedPlayers = [];
 let currentInterval = 0;
 let timeIntervals = [20, 10, 5];
-let intervalSwitchCount = [2, 3]; //per player
+let intervalSwitchCount = [2, 4]; //per player
 
 let options = {
     timeMultiplier:1.0
 
 };
 // Categories
-const categories = [
-    "Fliegende Dinge",
-    "Tiere",
-    "Farben",
-    "Berufe",
-    "Sportarten",
-    "Essen & Trinken",
-    "Städte & Länder",
-    "Filme & Serien",
-    "Musikinstrumente",
-    "Körperteile",
-    "Pflanzen",
-    "Fahrzeuge",
-    "Technologie",
-    "Möbel",
-    "Wetter",
-    "Gefühle",
-    "Schulfächer",
-    "Spiele",
-    "Werkzeuge",
-    "Naturphänomene",
-    "Kleidung",
-    "Baumaterialien",
-    "Hobby & Freizeit",
-    "Getränke",
-    "Bücher & Literatur",
-    "Berühmte Persönlichkeiten",
-    "Mythologie",
-    "Raum & Planeten",
-    "Feiertage",
-    "Instrumente",
-    "Tanzstile",
-    "Märchen & Fabelwesen",
-    "Elektronik",
-    "Wissenschaft",
-    "Politik",
-    "Religion",
-    "Märkte & Geschäfte",
-    "Verkehrsmittel",
-    "Sprachen",
-    "Musikgenres",
-    "Kunstformen",
-    "Bauwerke",
-    "Mathematik",
-    "Gesundheit & Medizin",
-    "Haustiere",
-    "Meerestiere",
-    "Insekten",
-    "Berufe im Krankenhaus",
-    "Camping & Outdoor",
-    "Superhelden",
-    "Automarken"
+let categories = [
   ];
   
 
 // DOM elements
 const setupSection = document.getElementById('setupSection');
+const wordListSection = document.getElementById('wordListSection');
+const wordListSectionIframe = document.getElementById('text-to-data-iframe');
 const gameSection = document.getElementById('gameSection');
 const categoryDisplay = document.getElementById('category');
 const currentPlayerDisplay = document.getElementById('currentPlayer');
@@ -116,14 +67,26 @@ restartBtn.addEventListener('click', restartGame);
 window.addEventListener('message', (event) => {
     // Optionally check event.origin here for security
     const data = event.data;
-    if(data.type === 'startGame'){
+   
+    if(data.type === 'playerSelectDone'){
         players = data.players;
+        setupSection.classList.add('hidden');
+        wordListSection.classList.remove('hidden');
+        window.postMessage({ type: 'start-text-to-date', mode:'bomb' }, '*');
+        wordListSectionIframe.contentWindow.postMessage({ type: 'start-text-to-date', mode:'bomb' }, '*');
+    }
+    if(data.type === 'text-to-data-done'){
+        //categories = data.categories;
+        wordListSection.classList.add('hidden');
+        setCategories(data.categories);
         startGame();
     }
   });
 
 
 // Load saved players when page loads
+
+
 
 
 function startGame() {
@@ -260,4 +223,14 @@ function resetGame() {
     updatePlayersList();
     updateStartButton();
     savePlayers(); // Save empty array to localStorage
+}
+function setCategories(cats){
+    cats.forEach((cat, i) => {
+        const parts = cat.text.split(',')
+        parts.forEach(element => {
+            categories.push(element);
+        });
+        
+      });
+      console.log(categories)
 }

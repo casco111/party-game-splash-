@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Simple Category Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            flex: 1;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .category {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3f4f6;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        button.edit {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        button.remove {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        button.add {
+            background: #10b981;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        button.abort {
+            background: #9ca3af;
+            color: #fff;
+        }
+
+        button.done {
+            background: #2563eb;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Categories</h1>
+     
+        <div class="category-list" id="categoryList"></div>
+        <button class="add" id="addCategoryBtn">Create Category</button>
+
+        <div id="newCategoryForm" class="hidden">
+            <input type="text" id="categoryName" placeholder="Category name" />
+            <textarea id="categoryText" placeholder="Paste your text here..."></textarea>
+            <div style="margin-top:10px; display:flex; gap:10px; justify-content:center;">
+                <button class="add" id="saveCategoryBtn">Save</button>
+                <button class="abort" id="abortEditBtn">Abort</button>
+            </div>
+        </div>
+
+        <button class="done" id="doneBtn">Done</button>
+    </div>
+
+    <script>
+        const listEl = document.getElementById('categoryList');
+        const addBtn = document.getElementById('addCategoryBtn');
+        const formEl = document.getElementById('newCategoryForm');
+        const nameEl = document.getElementById('categoryName');
+        const textEl = document.getElementById('categoryText');
+        const saveBtn = document.getElementById('saveCategoryBtn');
+        const abortBtn = document.getElementById('abortEditBtn');
+        const doneBtn = document.getElementById('doneBtn');
+
+        let categories = [];
+        let editingIndex = null;
+
+        let currentMode = 'bomb';
+
+
+        window.addEventListener('message', (event) => {
+            // Optionally check event.origin here for security
+            const data = event.data;
+            if (data.type === 'start-text-to-date') {
+                currentMode = data.mode;
+                loadCategories();
+                renderCategories();
+
+            }
+        });
+
+        function renderCategories() {
+            listEl.innerHTML = '';
+            categories.forEach((cat, index) => {
+                const div = document.createElement('div');
+                div.className = 'category';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = !!cat.selected;
+                checkbox.onchange = () => {
+                    cat.selected = checkbox.checked;
+                    saveCategories();
+                };
+
+                const nameSpan = document.createElement('strong');
+                nameSpan.textContent = cat.name;
+
+                const editBtn = document.createElement('button');
+                editBtn.textContent = '✎';
+                editBtn.className = 'edit';
+                editBtn.onclick = () => {
+                    nameEl.value = cat.name;
+                    textEl.value = cat.text;
+                    editingIndex = index;
+                    formEl.classList.remove('hidden');
+                    addBtn.classList.add('hidden');
+                };
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '✖';
+                removeBtn.className = 'remove';
+                removeBtn.onclick = () => {
+                    categories.splice(index, 1);
+                    saveCategories();
+                    renderCategories();
+                };
+
+                div.appendChild(checkbox);
+                div.appendChild(nameSpan);
+                div.appendChild(editBtn);
+                div.appendChild(removeBtn);
+                listEl.appendChild(div);
+            });
+        }
+
+        function saveCategories() {
+            localStorage.setItem(currentMode + '_simpleCategories', JSON.stringify(categories));
+        }
+        function loadCategories() {
+            categories = JSON.parse(localStorage.getItem(currentMode + '_simpleCategories') || '[]');
+        }
+        addBtn.onclick = () => {
+            formEl.classList.remove('hidden');
+            addBtn.classList.add('hidden');
+            nameEl.value = '';
+            textEl.value = '';
+            editingIndex = null;
+        };
+
+        saveBtn.onclick = () => {
+            const name = nameEl.value.trim();
+            const text = textEl.value.trim();
+            if (!name || !text) return alert('Please fill out both fields');
+            if (editingIndex !== null) {
+                categories[editingIndex] = { ...categories[editingIndex], name, text };
+            } else {
+                categories.push({ name, text, selected: true });
+            }
+            saveCategories();
+            renderCategories();
+            formEl.classList.add('hidden');
+            addBtn.classList.remove('hidden');
+            editingIndex = null;
+        };
+
+        abortBtn.onclick = () => {
+            formEl.classList.add('hidden');
+            addBtn.classList.remove('hidden');
+            nameEl.value = '';
+            textEl.value = '';
+            editingIndex = null;
+        };
+
+        doneBtn.onclick = () => {
+           window.parent.postMessage({ type: 'text-to-data-done', categories:categories.filter(c => c.selected) }, '*');
+        };
+
+
+    </script>
+</body>
+
+</html>

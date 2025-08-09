@@ -70,5 +70,5 @@ function updateStartButton() {
 
 function startGame(){
     console.log("start game")
-    window.parent.postMessage({ type: 'startGame', players }, '*');
+    window.parent.postMessage({ type: 'playerSelectDone', players }, '*');
 }
