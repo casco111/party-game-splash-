@@ -21,12 +21,12 @@ body {
 
 .game-container {
     background: white;
-    border-radius: 2vh;
-    padding: 2vh 3vh;
+    border-radius: 2dvh;
+    padding: 2dvh 3dvh;
     width: 95%;
     max-width: 800px;
-    height: 100vh;
-    box-shadow: 0 2vh 4vh rgba(0,0,0,0.3);
+    height: 100dvh;
+    box-shadow: 0 2dvh 4dvh rgba(0,0,0,0.3);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -36,8 +36,8 @@ body {
 
 /* Headings */
 h1 {
-    font-size: 5vh;
-    margin-bottom: 1.5vh;
+    font-size: 5dvh;
+    margin-bottom: 1.5dvh;
     color: #333;
     flex-shrink: 0;
 }
@@ -52,32 +52,32 @@ h1 {
 
 .player-input {
     display: flex;
-    gap: 2vh;
-    margin: 1.5vh 0;
+    gap: 2dvh;
+    margin: 1.5dvh 0;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .player-input input {
     flex: 1;
-    padding: 1.5vh;
-    border: 0.3vh solid #ddd;
-    border-radius: 1vh;
-    font-size: 3vh;
+    padding: 1.5dvh;
+    border: 0.3dvh solid #ddd;
+    border-radius: 1dvh;
+    font-size: 3dvh;
 }
 
 .add-player-btn {
     background: #28a745;
     color: white;
     border: none;
-    padding: 1.5vh 3vh;
-    border-radius: 1vh;
+    padding: 1.5dvh 3dvh;
+    border-radius: 1dvh;
     cursor: pointer;
-    font-size: 3vh;
+    font-size: 3dvh;
 }
 
 .players-list {
-    margin: 1.5vh 0;
+    margin: 1.5dvh 0;
     flex: 1;
     overflow-y: auto;
 }
@@ -86,20 +86,20 @@ h1 {
     display: inline-block;
     background: #667eea;
     color: white;
-    padding: 1vh 2.5vh;
-    border-radius: 5vh;
-    margin: 0.5vh;
-    font-size: 2.5vh;
+    padding: 1dvh 2.5dvh;
+    border-radius: 5dvh;
+    margin: 0.5dvh;
+    font-size: 2.5dvh;
 }
 .player-label {
-    font-size: 2vh; /* smaller, lighter */
+    font-size: 2dvh; /* smaller, lighter */
     font-weight: normal;
     opacity: 0.8;
-    margin-right: 0.5vh;
+    margin-right: 0.5dvh;
 }
 
 .player-name {
-    font-size: 5vh; /* larger */
+    font-size: 5dvh; /* larger */
     font-weight: bold;
     color: #333;
 }
@@ -109,20 +109,20 @@ h1 {
     background: #dc3545;
     color: white;
     border: none;
-    padding: 0.3vh 1vh;
+    padding: 0.3dvh 1dvh;
     border-radius: 50%;
-    margin-left: 1vh;
+    margin-left: 1dvh;
     cursor: pointer;
-    font-size: 2vh;
+    font-size: 2dvh;
 }
 
 /* Game Section */
 .category-display {
-    font-size: 6vh;
+    font-size: 6dvh;
     font-weight: bold;
-    margin: 1.5vh 0;
+    margin: 1.5dvh 0;
     color: #667eea;
-    min-height: 6vh;
+    min-height: 6dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -130,24 +130,24 @@ h1 {
 }
 
 .current-player {
-    font-size: 5vh;
-    margin: 1.5vh 0;
+    font-size: 5dvh;
+    margin: 1.5dvh 0;
     color: #333;
     font-weight: bold;
     flex-shrink: 0;
 }
 
 .timer {
-    font-size: 6vh;
-    margin: 1.5vh 0;
+    font-size: 6dvh;
+    margin: 1.5dvh 0;
     color: #dc3545;
     font-weight: bold;
     flex-shrink: 0;
 }
 
 .bomb {
-    font-size: 9vh;
-    margin: 1.5vh 0;
+    font-size: 9dvh;
+    margin: 1.5dvh 0;
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
@@ -159,8 +159,8 @@ h1 {
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-0.5vh); }
-    75% { transform: translateX(0.5vh); }
+    25% { transform: translateX(-0.5dvh); }
+    75% { transform: translateX(0.5dvh); }
 }
 
 /* Controls */
@@ -170,8 +170,8 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2vh;
-    padding-bottom: 8vh;
+    gap: 2dvh;
+    padding-bottom: 8dvh;
 }
 
 /* Next Player button */
@@ -179,35 +179,35 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1vh;
+    gap: 1dvh;
     background: #28a745;
-    padding: 2vh 5vh;
-    font-size: clamp(2vh, 4vh, 4vh);
+    padding: 2dvh 5dvh;
+    font-size: clamp(2dvh, 4dvh, 4dvh);
     min-width: 50%;
-    border-radius: 5vh;
+    border-radius: 5dvh;
     font-weight: bold;
 }
 .next-btn img,
 .next-btn svg {
-    height: 4vh;
-    width: 4vh;
+    height: 4dvh;
+    width: 4dvh;
 }
 
 /* Restart & Back buttons — anchored to bottom */
 .bottom-controls {
     position: absolute;
-    bottom: 1vh;
+    bottom: 1dvh;
     left: 0;
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 2vh;
+    gap: 2dvh;
 }
 
 .restart-btn, .back-btn {
-    font-size: 2vh;
-    padding: 1vh 2vh;
-    border-radius: 1vh;
+    font-size: 2dvh;
+    padding: 1dvh 2dvh;
+    border-radius: 1dvh;
     min-width: auto;
 }
 .restart-btn {
@@ -226,22 +226,22 @@ h1 {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 1.5vh 4vh;
-    border-radius: 5vh;
-    font-size: 3vh;
+    padding: 1.5dvh 4dvh;
+    border-radius: 5dvh;
+    font-size: 3dvh;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .btn:hover {
-    transform: translateY(-0.3vh);
+    transform: translateY(-0.3dvh);
 }
 
 /* Game over / status */
 .game-over {
-    font-size: 3vh;
+    font-size: 3dvh;
     color: #dc3545;
-    margin: 1vh 0;
+    margin: 1dvh 0;
 }
 .success {
     color: #28a745;
@@ -250,8 +250,8 @@ h1 {
     display: none;
 }
 .round-info {
-    font-size: 2.5vh;
+    font-size: 2.5dvh;
     color: #666;
-    margin: 0.8vh 0;
+    margin: 0.8dvh 0;
     flex-shrink: 0;
 }
