@@ -25,7 +25,8 @@ body {
     padding: 2dvh 3dvh;
     width: 95%;
     max-width: 800px;
-    height: 100dvh;
+    min-height: -webkit-fill-available;
+    height: 100dvh;     
     box-shadow: 0 2dvh 4dvh rgba(0,0,0,0.3);
     text-align: center;
     display: flex;
