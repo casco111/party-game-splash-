@@ -33,6 +33,7 @@ body {
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    overflow-y: auto;
 }
 
 /* Headings */
@@ -196,14 +197,17 @@ h1 {
 
 /* Restart & Back buttons — anchored to bottom */
 .bottom-controls {
-    position: absolute;
-    bottom: 1dvh;
+
+    position: sticky;
+    bottom: 0;
     left: 0;
     width: 100%;
     display: flex;
     justify-content: center;
     gap: 2dvh;
+    z-index: 10;
 }
+
 
 .restart-btn, .back-btn {
     font-size: 2dvh;
@@ -255,4 +259,47 @@ h1 {
     color: #666;
     margin: 0.8dvh 0;
     flex-shrink: 0;
+}
+.list-container {
+    flex-grow: 1;             /* fill available vertical space */
+    overflow-y: auto;         /* make this container scrollable */
+    padding-right: 1dvh;      /* for scrollbar space */
+    border: 0.2dvh solid #e0e0e0;
+    border-radius: 1.5dvh;
+    margin-bottom: 2dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+  }
+  
+.list-item {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 1dvh 2.5dvh;
+    border-radius: 1dvh;
+    margin: 0.5dvh;
+    font-size: 2.5dvh;
+    transition: background 0.2s ease;
+    white-space: normal;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+
+input {
+    padding: 1.5dvh 2dvh;      /* padding scales with height */
+    font-size: 2.5dvh;         /* text scales with height */
+    border: 0.3dvh solid #ccc; /* border scales */
+    border-radius: 1dvh;       /* rounded corners scale */
+    outline: none;
+    background: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    max-width: 90dvh;          /* optional: cap max width */
+}
+
+input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.5dvh rgba(102, 126, 234, 0.3);
 }

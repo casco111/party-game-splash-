@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
             url: 'games/word-association.html'
         },
         game4: {
-            title: 'Pictionary',
-            description: 'Draw and guess together in this classic drawing game!',
-            url: 'games/pictionary.html'
+            title: 'Find the imposter - questions',
+            description: 'Answer a question and try to stay unnoticed!',
+            url: 'games/questions.html'
         }
     };
     

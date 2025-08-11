@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wer hat die Bombe?</title>
+    <link rel="stylesheet" href="bomb.css">
+</head>
+<body>
+    <div class="game-container">
+        
+        
+        <!-- Setup Section -->
+        <div id="setupSection" class="setup-section ">
+            <h1>❓ Find the Imposter - Questions</h1>
+            <iframe src="../panels/player-select.html" style="border:none; width:100%; height:80%;"></iframe>
+        </div>
+        <div id="wordListSection" class="hidden setup-section">
+            <h1>❓ Find the Imposter - Questions?</h1>
+            <iframe id="text-to-data-iframe" src="../panels/text-to-data.html" style="border:none; width:100%; height:80%;"></iframe>
+        </div>
+        <!-- Game Section -->
+        <div id="gameSection" class="hidden">
+            
+            <div class="round-info">
+                Round: <span id="roundNumber">1</span>
+            </div>
+            
+            <div class="current-player" >
+                <div class="player-label">Current player:</div>
+                <div class="player-name" id="currentPlayer">-</div>
+            </div>
+            <div class="category-display" id="question">
+                Question is hidden 
+            </div>
+            
+           
+            
+            
+            
+            
+            <div class="controls">
+
+        
+                <button class="btn" id="showButton">
+                    Reveal Question
+                </button>
+                <input class="hidden" id="answer" type="text" placeholder="Your answer...">
+                <button class="btn hidden" id="nextBtn">
+                    Next Player
+                </button>
+               
+             
+               
+               
+
+            
+                <!-- Bottom anchored buttons -->
+                
+            </div>
+            
+            
+        </div>
+
+          
+        <div id="revealSection" class="hidden">
+            <h1>Antworten:</h1>
+            <button class="btn " id="revealImposter">
+                Reveal Imposter
+            </button>
+            <div class="listContainer" id="listContainer">
+                
+
+            </div>
+        </div>
+        <div class="bottom-controls">
+            <button class="btn" id="restartBtn">Restart</button>
+            <button class="btn" onclick="window.location.href='../index.html'">Menu</button>
+        </div>
+    </div>
+    
+    <script src="questions.js"></script>
+  
+</body>
+</html> 
