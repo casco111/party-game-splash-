@@ -14,7 +14,8 @@ let answers = [];
 let imposterItems = [];
 
 let options = {
-    timeMultiplier: 1.0
+    timeMultiplier: 1.0,
+    useDefaultPack:true
 
 };
 // Categories
@@ -38,6 +39,7 @@ const asnwerInput = document.getElementById('answer');
 const listContainer = document.getElementById('listContainer');
 const revealImposterButton = document.getElementById('revealImposter');
 const revealSection = document.getElementById('revealSection');
+const settingsIframe = document.getElementById('settingsIframe');
 
 
 nextBtn.addEventListener('click', nextPlayer);
@@ -53,12 +55,22 @@ window.addEventListener('message', (event) => {
         players = data.players;
         setupSection.classList.add('hidden');
         wordListSection.classList.remove('hidden');
+        wordListSectionIframe.classList.remove("hidden")
         wordListSectionIframe.contentWindow.postMessage({ type: 'start-text-to-date', mode: 'questions' }, '*');
     }
     if (data.type === 'text-to-data-done') {
         //categories = data.categories;
-        wordListSection.classList.add('hidden');
+        wordListSectionIframe.classList.add("hidden")
+        settingsIframe.classList.remove('hidden')
         setCategories(data.categories);
+        settingsIframe.contentWindow.postMessage({ type: 'startSettings', mode: 'questions', settings:options}, '*');
+    }
+    if (data.type === 'settingsDone') {
+        //categories = data.categories;
+        wordListSection.classList.add('hidden');
+        settingsIframe.classList.add('hidden')
+        options = data.settings;
+        console.log(options);
         startGame();
     }
 });

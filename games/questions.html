@@ -17,7 +17,8 @@
         </div>
         <div id="wordListSection" class="hidden setup-section">
             <h1>❓ Find the Imposter - Questions?</h1>
-            <iframe id="text-to-data-iframe" src="../panels/text-to-data.html" style="border:none; width:100%; height:80%;"></iframe>
+            <iframe id="text-to-data-iframe" src="../panels/text-to-data.html" style="border:none; width:100%; height:100%;"></iframe>
+            <iframe class="hidden" id="settingsIframe" src="../panels/settings.html" style="border:none; width:100%; height:100%;"></iframe>
         </div>
         <!-- Game Section -->
         <div id="gameSection" class="hidden">
@@ -63,9 +64,9 @@
         </div>
 
           
-        <div id="revealSection" class="hidden">
-            <h1>Antworten:</h1>
-            <button class="btn " id="revealImposter">
+        <div class="game-Section hidden" id="revealSection" class="hidden" style="margin-top: 5dvh;">
+            <h1 style="padding: 5dvh;">Antworten:</h1>
+            <button class="btn " id="revealImposter" >
                 Reveal Imposter
             </button>
             <div class="listContainer" id="listContainer">

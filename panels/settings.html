@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Clean Settings Editor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 1dvh;
+            border: 0.2dvh solid #e0e0e0;
+            border-radius: 1.5dvh;
+            margin-bottom: 2dvh;
+            display: flex;
+            flex-direction: column;
+            gap: 1dvh;
+            background: white;
+            max-width: 70dvh;
+            padding: 2dvh;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1dvh;
+        }
+
+        .list-item label {
+            font-size: 1.8dvh;
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 0.8dvh 1.2dvh;
+            font-size: 1.8dvh;
+            border: 0.2dvh solid #ccc;
+            border-radius: 0.8dvh;
+            outline: none;
+            background: white;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            max-width: 20dvh;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.3dvh rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        /* General button styling */
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1.5vh 4vh;
+            border-radius: 5vh;
+            font-size: 3vh;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-0.3vh);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Settings</h1>
+    <div id="settings-form" class="list-container"></div>
+    <button id="done-btn">Done</button>
+
+    <script>
+        let options = { opt1: true, opt2: 2, message: "Hello" };
+        let currentMode;
+
+        document.getElementById('done-btn').addEventListener('click', () => {
+            saveSettings();
+            window.parent.postMessage({ type: 'settingsDone', settings: options }, '*');
+        });
+
+
+        window.addEventListener('message', (event) => {
+            // Optionally check event.origin here for security
+            const data = event.data;
+            if (data.type === 'startSettings') {
+                currentMode = data.mode;
+                options = data.settings;
+                tryLoadSettigns();
+                renderForm();
+            }
+        });
+
+        function saveSettings() {
+            localStorage.setItem(currentMode + '_settings', JSON.stringify(options));
+        }
+        function tryLoadSettigns() {
+            let load = JSON.parse(localStorage.getItem(currentMode + '_settings') || '[]');
+            console.log(load)
+            const keys1 = Object.keys(load);
+            const keys2 = Object.keys(options);
+
+            const onlyIn1 = keys1.filter(k => !keys2.includes(k));
+            const onlyIn2 = keys2.filter(k => !keys1.includes(k));
+            const inBoth = keys1.filter(k => keys2.includes(k));
+            if(inBoth.length == keys2.length) options = load;
+        }
+
+
+
+
+
+        function renderForm() {
+            const form = document.getElementById('settings-form');
+            form.innerHTML = '';
+            Object.keys(options).forEach(key => {
+                const value = options[key];
+                const div = document.createElement('div');
+                div.className = 'list-item';
+
+                const label = document.createElement('label');
+                label.textContent = key;
+
+                let input;
+                if (typeof value === 'boolean') {
+                    input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.checked = value;
+                    input.addEventListener('change', e => {
+                        options[key] = e.target.checked;
+                    });
+                } else if (typeof value === 'number') {
+                    input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = value;
+                    input.addEventListener('input', e => {
+                        options[key] = parseFloat(e.target.value);
+                    });
+                } else {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = value;
+                    input.addEventListener('input', e => {
+                        options[key] = e.target.value;
+                    });
+                }
+
+                div.appendChild(label);
+                div.appendChild(input);
+                form.appendChild(div);
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>
