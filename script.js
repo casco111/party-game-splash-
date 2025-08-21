@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             url: 'games/word-association.html'
         },
         game4: {
-            title: 'Find the imposter - questions',
+            title: 'Find the Imposter - Questions',
             description: 'Answer a question and try to stay unnoticed!',
             url: 'games/questions.html'
         }

@@ -10,6 +10,7 @@ let isPlaying = false;
 let wordCount = 0;
 let roundNumber = 1;
 let currentQuestions = [];
+let chosenQuestion;
 let answers = [];
 let imposterItems = [];
 
@@ -139,7 +140,9 @@ function loadNewQuestionCategory() {
     let t = Math.floor(Math.random() * players.length)
     for (let i = 0; i < players.length; i++) {
         if (i == t) currentQuestions.push(currentCategory[r]);
-        else currentQuestions.push(currentCategory[s]);
+        else {currentQuestions.push(currentCategory[s]);
+            chosenQuestion = currentCategory[s];
+        }
     }
     imposterPlayers.push(t);
 }
@@ -174,6 +177,7 @@ function revealAnswers() {
         newItem.textContent = e.player + ": " + e.answer;
         listContainer.appendChild(newItem);
         if(e.isImposter)imposters.push(newItem);
+        document.getElementById("chosenQuestion").textContent = chosenQuestion;
     });
    imposterItems = imposters;
    revealSection.classList.remove("hidden")
